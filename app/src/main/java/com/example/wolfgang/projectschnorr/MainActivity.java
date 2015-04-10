@@ -32,7 +32,6 @@ public class MainActivity extends ActionBarActivity {
         }
         //
         fillListView();
-        d
     }
 
 
