@@ -31,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
             allDebts.add(input);
         }
         //
-        fillListView(); //homooo baunti du wixa
+        fillListView(); //homooo baunti du wixa hihi
     }
 
 
