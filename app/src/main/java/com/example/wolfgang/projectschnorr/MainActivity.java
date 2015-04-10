@@ -7,16 +7,31 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends ActionBarActivity {
 
     public static final String TAG = "MainActivity";
+    ArrayList<String> allNames = new ArrayList<String>();
+    ArrayList<String> allDebts = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(TAG, "nach intent aufruf*********");
+        // nach Intent aufruf Extras auslesen
+        Intent i = getIntent();
+        Bundle params = i.getExtras();
+        if(params != null){
+            String input = params.getString("Schulden");
+            String name = params.getString("Name");
+            allNames.add(name);
+            allDebts.add(input);
+        }
+        //
+        fillListView();
     }
 
 
@@ -43,5 +58,9 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void fillListView(){
+
     }
 }
