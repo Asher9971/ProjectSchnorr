@@ -10,11 +10,12 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.25">
+        android:layout_weight="0.68">
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="346dp"
+            android:layout_height="324dp"
             android:id="@+id/android:list" />
     </LinearLayout>
+
 </LinearLayout>
