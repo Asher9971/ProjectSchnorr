@@ -20,6 +20,8 @@ public class MainActivity extends ActionBarActivity {
     ArrayList<String> allNames = new ArrayList<String>();
     ArrayList<String> allDebts = new ArrayList<String>();
 
+    ArrayList<String> fertigeEintraege = new ArrayList<String>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,8 +37,6 @@ public class MainActivity extends ActionBarActivity {
             allNames.add(name);
             allDebts.add(input);
         }
-
-        addNames();
 
     }
 
@@ -64,10 +64,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void addNames()
-    {
-        
     }
 }
