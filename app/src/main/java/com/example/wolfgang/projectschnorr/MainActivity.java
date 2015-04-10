@@ -6,12 +6,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
 
 import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
 
+    ListView lv;
     public static final String TAG = "MainActivity";
     ArrayList<String> allNames = new ArrayList<String>();
     ArrayList<String> allDebts = new ArrayList<String>();
@@ -20,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lv = (ListView) findViewById(R.id.listView);
         Log.d(TAG, "nach intent aufruf*********");
         // nach Intent aufruf Extras auslesen
         Intent i = getIntent();
@@ -31,7 +36,6 @@ public class MainActivity extends ActionBarActivity {
             allDebts.add(input);
         }
         //
-        fillListView();
     }
 
 
@@ -58,9 +62,5 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void fillListView(){
-
     }
 }
