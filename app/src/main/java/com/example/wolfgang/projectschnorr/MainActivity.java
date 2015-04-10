@@ -35,7 +35,9 @@ public class MainActivity extends ActionBarActivity {
             allNames.add(name);
             allDebts.add(input);
         }
-        
+
+        addNames();
+
     }
 
 
@@ -62,5 +64,10 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addNames()
+    {
+        
     }
 }
