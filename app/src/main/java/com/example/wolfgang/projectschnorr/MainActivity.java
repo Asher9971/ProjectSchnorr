@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 
 
 import java.util.ArrayList;
@@ -35,9 +36,6 @@ public class MainActivity extends ActionBarActivity {
             allNames.add(name);
             allDebts.add(input);
         }
-
-        addNames();
-
     }
 
 
@@ -66,8 +64,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     public void addNames()
     {
-        
+
     }
 }
