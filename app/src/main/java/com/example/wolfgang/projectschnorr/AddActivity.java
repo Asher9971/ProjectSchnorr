@@ -3,6 +3,7 @@ package com.example.wolfgang.projectschnorr;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.provider.Contacts;
 import android.provider.ContactsContract;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -26,8 +28,10 @@ import java.util.ArrayList;
 public class AddActivity extends ActionBarActivity {
     ListView lv;
     Cursor cursor1;
+    Intent intent;
     ArrayList <String> allnames = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
+    int clickedName = 0;
     TextView tv; //hadfhaefowwoeefoq   TESTWIEDERLÖSCHEN
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,9 @@ public class AddActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
             {
+                clickedName = position;
                 tv.setText(allnames.get(position));
+                showAddDialog();
                 
             }
         });
@@ -66,6 +72,35 @@ public class AddActivity extends ActionBarActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_add, menu);
         return true;
+    }
+
+    private void showAddDialog(){
+        final EditText txtName = new EditText(this);
+        final boolean ok = false;
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(allnames.get(clickedName)+" Schuldet Ihnen: ")
+                .setCancelable(true)
+                .setView(txtName)
+                .setPositiveButton("OK.", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                       String newName = txtName.getText().toString();
+                       setIntent(newName);
+                       startActivity(intent);
+                    }
+                })
+                .setNegativeButton("Cancel.", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    public void setIntent(String input){
+        intent = new Intent(this, MainActivity.class);
+        intent.putExtra("Schulden", input);
+        intent.putExtra("Name", allnames.get(clickedName));
     }
 
     @Override
