@@ -35,7 +35,7 @@ public class MainActivity extends ActionBarActivity {
             allNames.add(name);
             allDebts.add(input);
         }
-        //
+        // HAllo BAUNTIII
     }
 
 
