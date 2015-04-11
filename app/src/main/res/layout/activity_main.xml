@@ -7,14 +7,15 @@
     android:weightSum="1">
 
     <LinearLayout
+        android:id="@+id/linearlayout"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.68">
+        android:layout_weight="0.57">
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="324dp"
+            android:layout_height="264dp"
             android:id="@+id/android:list" />
     </LinearLayout>
 

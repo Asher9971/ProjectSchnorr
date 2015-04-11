@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 
 import java.util.ArrayList;
+
 
 
 public class MainActivity extends ActionBarActivity {
@@ -19,13 +20,13 @@ public class MainActivity extends ActionBarActivity {
     public static final String TAG = "MainActivity";
     ArrayList<String> allNames = new ArrayList<String>();
     ArrayList<String> allDebts = new ArrayList<String>();
-
-    ArrayList<String> fertigeEintraege = new ArrayList<String>();
+    LinearLayout ll;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ll = (LinearLayout) findViewById(R.id.linearlayout);
         lv = (ListView) findViewById(R.id.listView);
         Log.d(TAG, "nach intent aufruf*********");
         // nach Intent aufruf Extras auslesen
@@ -35,8 +36,9 @@ public class MainActivity extends ActionBarActivity {
             String input = params.getString("Schulden");
             String name = params.getString("Name");
             allNames.add(name);
-            allDebts.add(input); //nix
+            allDebts.add(input);
         }
+        fillList(); //nix
 
     }
 
@@ -65,4 +67,10 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    public void fillList(){
+        Log.d(TAG, "in fillList***********");
+
+    }
+
 }
