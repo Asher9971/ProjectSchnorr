@@ -63,6 +63,7 @@ public class AddActivity extends ActionBarActivity {
         }
         arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
         lv.setAdapter(arrayadapter);
+        cursor.close();
 
     }
 
@@ -99,8 +100,8 @@ public class AddActivity extends ActionBarActivity {
 
     public void setIntent(String input){
         intent = new Intent(this, MainActivity.class);
-        intent.putExtra("Schulden", input);
-        intent.putExtra("Name", allnames.get(clickedName));
+        intent.putExtra("schulden", input);
+        intent.putExtra("name", allnames.get(clickedName));
     }
 
     @Override

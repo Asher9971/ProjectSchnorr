@@ -6,39 +6,38 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
-
-
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    ListView lv;
+    ListView list;
     public static final String TAG = "MainActivity";
-    ArrayList<String> allNames = new ArrayList<String>();
-    ArrayList<String> allDebts = new ArrayList<String>();
-    LinearLayout ll;
+    public ArrayList<String> allNames = new ArrayList<String>();
+    public ArrayList<String> allDebts = new ArrayList<String>();
+    public ArrayList<String> everything = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ll = (LinearLayout) findViewById(R.id.linearlayout);
-        lv = (ListView) findViewById(R.id.listView);
+        list = (ListView) findViewById(R.id.listView);
         Log.d(TAG, "nach intent aufruf*********");
         // nach Intent aufruf Extras auslesen
         Intent i = getIntent();
         Bundle params = i.getExtras();
         if(params != null){
-            String input = params.getString("Schulden");
-            String name = params.getString("Name");
+            String input = params.getString("schulden");
+            String name = params.getString("name");
             allNames.add(name);
             allDebts.add(input);
+            fillList(); //nix
         }
-        fillList(); //nix
 
     }
 
@@ -68,8 +67,14 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void fillList(){
+    public void fillList() {
         Log.d(TAG, "in fillList***********");
+        for (int i = 0; i < allNames.size(); i++) {
+            everything.add(allNames.get(i).toString() + ":  " + allDebts.get(i).toString());
+            Log.d(TAG, "in for:  " + everything.get(i));
+        }
+        ArrayAdapter <String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, everything);
+        list.setAdapter(adapter);
 
     }
 
