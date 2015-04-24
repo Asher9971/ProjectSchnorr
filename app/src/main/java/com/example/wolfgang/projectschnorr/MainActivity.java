@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity {
             String name = params.getString("name");
             allNames.add(name);
             allDebts.add(input);
-            fillList(); //nix
+            fillList();
         }
 
     }
