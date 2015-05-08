@@ -29,18 +29,6 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
         Log.d(TAG, "nach intent aufruf*********");
-        // nach Intent aufruf Extras auslesen
-
-        Intent i = getIntent();
-        Bundle params = i.getExtras();
-        if(params != null){
-            String input = params.getString("schulden");
-            String name = params.getString("name");
-            allNames.add(name);
-            allDebts.add(input);
-
-            fillList();
-        }
     }
 
 
@@ -76,20 +64,13 @@ public class MainActivity extends ActionBarActivity
 
         if (resultCode == Activity.RESULT_OK)
         {
-            Intent i = getIntent();
-            Bundle params = i.getExtras();
+            Bundle params = data.getExtras();
             if (params != null)
             {
                 CharSequence name = params.getCharSequence("name");
                 CharSequence schulden = params.getCharSequence("schulden");
                 allNames.add(name.toString());
                 allDebts.add(schulden.toString());
-                /*
-                String input = params.getString("schulden");
-                String name = params.getString("name");
-                allNames.add(name);
-                allDebts.add(input);
-                */
 
                 fillList();
             }
@@ -101,7 +82,7 @@ public class MainActivity extends ActionBarActivity
     public void fillList()
     {
         Log.d(TAG, "in fillList***********");
-
+        everything = new ArrayList<String>();
         for (int i = 0; i < allNames.size(); i++)
         {
             everything.add(allNames.get(i).toString() + ":  " + allDebts.get(i).toString());
