@@ -1,5 +1,6 @@
 package com.example.wolfgang.projectschnorr;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,20 +26,22 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class AddActivity extends ActionBarActivity {
+public class AddActivity extends Activity
+{
     ListView lv;
     Cursor cursor1;
     Intent intent;
     ArrayList <String> allnames = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
     int clickedName = 0;
-    TextView tv; //hadfhaefowwoeefoq   TESTWIEDERLÖSCHEN
+    TextView tv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
-        tv = (TextView) findViewById(R.id.textView);        //TEST WIEDER LÖSCHEN!!!!!
+        tv = (TextView) findViewById(R.id.textView);
         fillListWithContacts();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -86,7 +89,8 @@ public class AddActivity extends ActionBarActivity {
                     public void onClick(DialogInterface dialog, int id){
                        String newName = txtName.getText().toString();
                        setIntent(newName);
-                       startActivity(intent);
+
+
                     }
                 })
                 .setNegativeButton("Cancel.", new DialogInterface.OnClickListener() {
@@ -98,10 +102,13 @@ public class AddActivity extends ActionBarActivity {
         alert.show();
     }
 
+
     public void setIntent(String input){
-        intent = new Intent(this, MainActivity.class);
+        intent = new Intent();
         intent.putExtra("schulden", input);
         intent.putExtra("name", allnames.get(clickedName));
+        setResult(Activity.RESULT_OK, intent);
+        finish();
     }
 
     @Override

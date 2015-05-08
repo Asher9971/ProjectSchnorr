@@ -1,5 +1,6 @@
 package com.example.wolfgang.projectschnorr;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -7,14 +8,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import java.util.ArrayList;
-import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity
+{
+
+    private static final int REQUEST_CODE = 666;
 
     ListView list;
     public static final String TAG = "MainActivity";
@@ -29,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
         list = (ListView) findViewById(R.id.listView);
         Log.d(TAG, "nach intent aufruf*********");
         // nach Intent aufruf Extras auslesen
+
         Intent i = getIntent();
         Bundle params = i.getExtras();
         if(params != null){
@@ -36,9 +38,9 @@ public class MainActivity extends ActionBarActivity {
             String name = params.getString("name");
             allNames.add(name);
             allDebts.add(input);
+
             fillList();
         }
-
     }
 
 
@@ -58,21 +60,46 @@ public class MainActivity extends ActionBarActivity {
 
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_add) {
+        if (id == R.id.action_add)
+        {
             Intent intent = new Intent(this, AddActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, REQUEST_CODE);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void fillList() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        /*
+        if (resultCode == Activity.RESULT_OK) {
+            Intent i = getIntent();
+            Bundle params = i.getExtras();
+            if (params != null) {
+                String input = params.getString("schulden");
+                String name = params.getString("name");
+                allNames.add(name);
+                allDebts.add(input);
+
+                fillList();
+            }
+        }
+        */
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void fillList()
+    {
         Log.d(TAG, "in fillList***********");
-        for (int i = 0; i < allNames.size(); i++) {
+
+        for (int i = 0; i < allNames.size(); i++)
+        {
             everything.add(allNames.get(i).toString() + ":  " + allDebts.get(i).toString());
             Log.d(TAG, "in for:  " + everything.get(i));
         }
+
         ArrayAdapter <String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, everything);
         list.setAdapter(adapter);
 
