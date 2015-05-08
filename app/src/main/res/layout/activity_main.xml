@@ -11,11 +11,12 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/background"
         android:layout_weight="0.57">
 
         <ListView
             android:layout_width="wrap_content"
-            android:layout_height="264dp"
+            android:layout_height="match_parent"
             android:id="@+id/listView" />
     </LinearLayout>
 

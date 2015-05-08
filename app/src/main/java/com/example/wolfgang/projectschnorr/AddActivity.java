@@ -41,7 +41,6 @@ public class AddActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
-        tv = (TextView) findViewById(R.id.textView);
         fillListWithContacts();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -50,7 +49,6 @@ public class AddActivity extends Activity
             public void onItemClick(AdapterView<?> arg0, View arg1,int position, long arg3)
             {
                 clickedName = position;
-                tv.setText(allnames.get(position));
                 showAddDialog();
                 
             }

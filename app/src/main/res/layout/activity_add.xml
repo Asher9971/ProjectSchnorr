@@ -4,25 +4,20 @@
     android:layout_height="match_parent"
     tools:context="com.example.wolfgang.projectschnorr.AddActivity"
     android:orientation="vertical"
+    android:background="@drawable/background"
     android:weightSum="1">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="265dp"
-        android:layout_weight="0.36">
+        android:layout_weight="0.36"
+        android:weightSum="1">
 
         <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/listView" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="129dp"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/textView"
-        android:layout_weight="0.10" />
 </LinearLayout>
