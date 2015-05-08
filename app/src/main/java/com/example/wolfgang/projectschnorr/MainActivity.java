@@ -21,6 +21,7 @@ public class MainActivity extends ActionBarActivity
     public static final String TAG = "MainActivity";
     public ArrayList<String> allNames = new ArrayList<String>();
     public ArrayList<String> allDebts = new ArrayList<String>();
+    public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
 
     @Override
@@ -69,8 +70,11 @@ public class MainActivity extends ActionBarActivity
             {
                 CharSequence name = params.getCharSequence("name");
                 CharSequence schulden = params.getCharSequence("schulden");
+                CharSequence nummer = params.getCharSequence("nummer");
+
                 allNames.add(name.toString());
                 allDebts.add(schulden.toString());
+                allNummbers.add(nummer.toString());
 
                 fillList();
             }

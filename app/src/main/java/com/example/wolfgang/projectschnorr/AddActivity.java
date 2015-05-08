@@ -10,16 +10,20 @@ import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +36,7 @@ public class AddActivity extends Activity
     Cursor cursor1;
     Intent intent;
     ArrayList <String> allnames = new ArrayList<String>();
+    ArrayList <String> allnumbers = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
     int clickedName = 0;
     TextView tv;
@@ -60,7 +65,9 @@ public class AddActivity extends Activity
         Cursor cursor = getContentResolver().query(   ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,null, null);
         while (cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             allnames.add(name);
+            allnumbers.add(number);
         }
         arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
         lv.setAdapter(arrayadapter);
@@ -78,18 +85,34 @@ public class AddActivity extends Activity
 
     private void showAddDialog(){
         final EditText txtName = new EditText(this);
+        final Spinner howto = new Spinner(this);
         final boolean ok = false;
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        final Spinner whoto = new Spinner(this);
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        whoto.setAdapter(spinnerAdapter);
+        spinnerAdapter.add("Ich - Ihm");
+        spinnerAdapter.add("Er - Ich");
+        spinnerAdapter.notifyDataSetChanged();
+        whoto.setPadding(20, 20, 20, 20);
+        layout.addView(whoto);
+
+        final EditText note = new EditText(this);
+        note.setHint("Notiz");
+        layout.addView(note);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(allnames.get(clickedName)+" Schuldet Ihnen: ")
                 .setCancelable(true)
-                .setView(txtName)
-                .setPositiveButton("OK.", new DialogInterface.OnClickListener(){
-                    public void onClick(DialogInterface dialog, int id){
-                       String newSchulden = txtName.getText().toString();
-                       setIntent(newSchulden);
-
-
-
+                .setView(layout)
+                .setPositiveButton("OK.", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        String newSchulden = note.getText().toString();
+                        setIntent(newSchulden);
                     }
                 })
                 .setNegativeButton("Cancel.", new DialogInterface.OnClickListener()
@@ -108,6 +131,7 @@ public class AddActivity extends Activity
         intent = new Intent();
         intent.putExtra("schulden", input);
         intent.putExtra("name", allnames.get(clickedName));
+        intent.putExtra("nummer", allnumbers.get(clickedName));
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
