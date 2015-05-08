@@ -87,14 +87,17 @@ public class AddActivity extends Activity
                 .setView(txtName)
                 .setPositiveButton("OK.", new DialogInterface.OnClickListener(){
                     public void onClick(DialogInterface dialog, int id){
-                       String newName = txtName.getText().toString();
-                       setIntent(newName);
+                       String newSchulden = txtName.getText().toString();
+                       setIntent(newSchulden);
+
 
 
                     }
                 })
-                .setNegativeButton("Cancel.", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                .setNegativeButton("Cancel.", new DialogInterface.OnClickListener()
+                {
+                    public void onClick(DialogInterface dialog, int id)
+                    {
                         dialog.cancel();
                     }
                 });

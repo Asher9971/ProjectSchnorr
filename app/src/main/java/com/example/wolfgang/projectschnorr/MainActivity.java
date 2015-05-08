@@ -73,20 +73,28 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        /*
-        if (resultCode == Activity.RESULT_OK) {
+
+        if (resultCode == Activity.RESULT_OK)
+        {
             Intent i = getIntent();
             Bundle params = i.getExtras();
-            if (params != null) {
+            if (params != null)
+            {
+                CharSequence name = params.getCharSequence("name");
+                CharSequence schulden = params.getCharSequence("schulden");
+                allNames.add(name.toString());
+                allDebts.add(schulden.toString());
+                /*
                 String input = params.getString("schulden");
                 String name = params.getString("name");
                 allNames.add(name);
                 allDebts.add(input);
+                */
 
                 fillList();
             }
         }
-        */
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
