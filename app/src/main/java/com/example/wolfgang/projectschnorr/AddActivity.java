@@ -10,6 +10,7 @@ import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,10 +97,11 @@ public class AddActivity extends Activity
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         whoto.setAdapter(spinnerAdapter);
         spinnerAdapter.add("Ich - Ihm");
-        spinnerAdapter.add("Er - Ich");
+        spinnerAdapter.add("Er - Mir");
         spinnerAdapter.notifyDataSetChanged();
         whoto.setPadding(20, 20, 20, 20);
         layout.addView(whoto);
+
 
         final EditText note = new EditText(this);
         note.setHint("Notiz");
