@@ -1,7 +1,9 @@
 package com.example.wolfgang.projectschnorr;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import java.util.ArrayList;
 
 
@@ -23,13 +28,14 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
+    JSONArray user = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
-        Log.d(TAG, "nach intent aufruf*********");
+        new JSONParse().execute();
     }
 
 
@@ -97,5 +103,57 @@ public class MainActivity extends ActionBarActivity
         list.setAdapter(adapter);
 
     }
+    private class JSONParse extends AsyncTask<String, String, JSONObject> {
+        private ProgressDialog pDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //uid = (TextView)findViewById(R.id.uid);
+            //name1 = (TextView)findViewById(R.id.name);
+            //email1 = (TextView)findViewById(R.id.email);
+            Log.d(TAG, "in onPreExecute im AsyncTask");
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Getting Data ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... args) {
+            JSONParser jParser = new JSONParser();
+            Log.d(TAG, "in doInBackground im AsyncTask");
+            // Getting JSON from URL
+            JSONObject json = jParser.getJSONFromUrl("http://10.10.107.56/get_all_user.php");
+            return json;
+        }
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            pDialog.dismiss();
+            try {
+                // Getting JSON Array
+                Log.d(TAG, "in onPostExecute in AsyncTask");
+                user = json.getJSONArray("user");
+                for(int i=0; i<user.length(); i++) {
+                    JSONObject c = user.getJSONObject(i);
+
+                    // Storing  JSON item in a Variable
+                    String first_name = c.getString("first_name");
+                    String last_name = c.getString("last_name");
+                    String note = c.getString("note");
+                    everything.add(first_name + " " + last_name + ": " + note);
+
+                    Log.d(TAG, "first_name = " + first_name);
+                }
+                fillList();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
 }
+
+
