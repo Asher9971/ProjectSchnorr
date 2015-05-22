@@ -11,14 +11,25 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity
@@ -33,7 +44,10 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
     public String myImei="";
+    String selectedName="";
+    String selectedNote="";
     JSONParse mTask = new JSONParse();
+    JSONDelete dTask = new JSONDelete();
     JSONArray user = null;
 
     @Override
@@ -42,9 +56,50 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
         getMyImei();
+        registerForContextMenu(list);
         mTask.execute();
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        if (v.getId()==R.id.listView){
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+            menu.setHeaderTitle(allNames.get(info.position));
+            String[] menuItems = {"DELETE", "INFO"};
+            for (int i = 0; i<menuItems.length; i++) {
+                menu.add(Menu.NONE, i, i, menuItems[i]);
+            }
+        }
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
+                String temp = list.getItemAtPosition(index).toString();
+                String[] temp2 = temp.split(" ");
+                String selectedNameTemp = temp2[0] + " " + temp2[1];
+                String[] selectedNameTemp2 = selectedNameTemp.split(":");
+                selectedName = selectedNameTemp2[0];
+                selectedNote = temp2[3];
+                Log.d(TAG, "selectedName= " + selectedName);
+                return true;
+            }
+        });
+    }
+
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        int menuItemIndex = item.getItemId();
+        Log.d(TAG, "menuItemIndex= "+menuItemIndex);
+        if(menuItemIndex==0){
+            deleteNotification();
+        }
+        return true;
+    }
+
+    private void deleteNotification() {
+        dTask.execute();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -119,7 +174,7 @@ public class MainActivity extends ActionBarActivity
         if (identifier == null || identifier .length() == 0)
             identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.d(TAG, "IMEI or Identifier= "+identifier);
-        String testtt = tm.getLine1Number().toString();
+        String testtt = tm.getLine1Number();
         Log.d(TAG, "meineNummer: "+testtt);
         myImei = identifier;
 
@@ -191,6 +246,62 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+    private class JSONDelete extends AsyncTask<String, String, JSONObject> {
+        private ProgressDialog pDialog;
+        private final static String URLdelete_notification = "http://schnorrbert.webege.com/delete_notification.php";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //uid = (TextView)findViewById(R.id.uid);
+            //name1 = (TextView)findViewById(R.id.name);
+            //email1 = (TextView)findViewById(R.id.email);
+            Log.d(TAG, "in onPreExecute im AsyncTask");
+            pDialog = new ProgressDialog(MainActivity.this);
+            pDialog.setMessage("Getting Data ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
+
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... args) {
+            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
+            HttpPost requestIdentifier = new HttpPost(URLdelete_notification);
+            List<NameValuePair> paramsDelete = new ArrayList<NameValuePair>();
+            AddActivity aa = new AddActivity();
+            String phone_to ="";
+
+            for(int i=0; i<aa.allnames.size(); i++)
+            {
+                if(aa.allnames.get(i).equals(selectedName))
+                {
+                    phone_to = aa.allnumbers.get(i);
+                }
+            }
+
+            paramsDelete.add(new BasicNameValuePair("identifier", ""+myImei));
+            paramsDelete.add(new BasicNameValuePair("phone_to", ""+phone_to));
+            paramsDelete.add(new BasicNameValuePair("note", ""+selectedNote));
+            //paramsDelete.add(new BasicNameValuePair("phone_to", ""+allNummbers.get()));
+            try{
+                //requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
+                HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
+                return null;
+            }catch(Exception e){
+                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            Log.d(TAG, "in onPostExecute in MainActivity");
+            fillList();
+        }
+    }
 }
 
 

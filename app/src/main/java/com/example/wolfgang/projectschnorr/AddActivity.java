@@ -75,8 +75,8 @@ public class AddActivity extends Activity
     Cursor cursor1;
     Intent intent;
     final static String TAG = "AddActivity";
-    ArrayList <String> allnames = new ArrayList<String>();
-    ArrayList <String> allnumbers = new ArrayList<String>();
+    public ArrayList <String> allnames = new ArrayList<String>();
+    public ArrayList <String> allnumbers = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
     int clickedName = 0;
     String newSchulden = "";
@@ -248,7 +248,7 @@ public class AddActivity extends Activity
             DefaultHttpClient clientIdentifier = new DefaultHttpClient();
             HttpPost requestIdentifier = new HttpPost(URLpush_identifier);
             List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("identifier", ""+myImei));
+            paramsIdentifier.add(new BasicNameValuePair("identifier", ""+myImei));
             try{
                 requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
                 HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
