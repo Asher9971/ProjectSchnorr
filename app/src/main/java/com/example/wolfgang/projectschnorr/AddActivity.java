@@ -195,7 +195,7 @@ public class AddActivity extends Activity
     private class JSONPost extends AsyncTask<String, String, JSONObject> {
 
         //private ProgressDialog pDialog;
-        private final static String URL = "http://schnorrbert.webege.com/get_all_user.php";
+        private final static String URL = "http://schnorrbert.webege.com/insert_user.php";
 
         @Override
         protected void onPreExecute() {
@@ -215,11 +215,12 @@ public class AddActivity extends Activity
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost request = new HttpPost(URL);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("first_name", "test1"));
-            params.add(new BasicNameValuePair("last_name", "test2"));
-            params.add(new BasicNameValuePair("phone", "039302"));
-            params.add(new BasicNameValuePair("phone_to", "2393204"));
-            params.add(new BasicNameValuePair("note", "asdfadf"));
+            String [] names = allnames.get(clickedName).split(" ");
+            params.add(new BasicNameValuePair("first_name", ""+names[0]));
+            params.add(new BasicNameValuePair("last_name", ""+names[1]));
+            params.add(new BasicNameValuePair("phone", "06504753150"));
+            params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
+            params.add(new BasicNameValuePair("note", ""+newSchulden));
             try{
                 request.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = client.execute(request);

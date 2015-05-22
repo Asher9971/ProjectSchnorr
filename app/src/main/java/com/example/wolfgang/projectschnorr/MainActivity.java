@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +30,7 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
+    public String myImei="";
     JSONParse mTask = new JSONParse();
     JSONArray user = null;
 
@@ -36,6 +39,7 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
+        getMyImei();
         mTask.execute();
     }
 
@@ -104,6 +108,19 @@ public class MainActivity extends ActionBarActivity
         list.setAdapter(adapter);
 
     }
+
+    private void getMyImei(){
+        String identifier = null;
+        TelephonyManager tm = (TelephonyManager)this.getSystemService(this.TELEPHONY_SERVICE);
+        if (tm != null)
+            identifier = tm.getDeviceId();
+        if (identifier == null || identifier .length() == 0)
+            identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "IMEI or Identifier= "+identifier);
+        myImei = identifier;
+    }
+
+
     private class JSONParse extends AsyncTask<String, String, JSONObject> {
         private ProgressDialog pDialog;
         @Override
