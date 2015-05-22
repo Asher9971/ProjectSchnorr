@@ -195,7 +195,7 @@ public class AddActivity extends Activity
     private class JSONPost extends AsyncTask<String, String, JSONObject> {
 
         //private ProgressDialog pDialog;
-        private final static String URL = "http://schnorrbert.webege.com/insert_user.php";
+        private final static String URL = "http://schnorrbert.webege.com/insert_notification.php";
 
         @Override
         protected void onPreExecute() {

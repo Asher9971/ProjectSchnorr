@@ -143,7 +143,7 @@ public class MainActivity extends ActionBarActivity
             JSONParser jParser = new JSONParser();
             Log.d(TAG, "in doInBackground im AsyncTask");
             // Getting JSON from URL
-            JSONObject json = jParser.getJSONFromUrl("http://schnorrbert.webege.com/get_all_user.php");
+            JSONObject json = jParser.getJSONFromUrl("http://schnorrbert.webege.com/get_all_notifications.php");
             pDialog.dismiss();
             try {
                 // Getting JSON Array
