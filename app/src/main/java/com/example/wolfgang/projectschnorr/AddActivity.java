@@ -250,8 +250,8 @@ public class AddActivity extends Activity
             List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("identifier", ""+myImei));
             try{
-                requestIdentifier.setEntity(new UrlEncodedFormEntity(params));
-                HttpResponse responseItentifier = client.execute(request);
+                requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
+                HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
                 return null;
             }catch(Exception e){
                 Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());

@@ -143,7 +143,8 @@ public class MainActivity extends ActionBarActivity
             JSONParser jParser = new JSONParser();
             Log.d(TAG, "in doInBackground im AsyncTask");
             // Getting JSON from URL
-            JSONObject json = jParser.getJSONFromUrl("http://schnorrbert.webege.com/get_all_notifications.php");
+            JSONObject json = jParser.getJSONFromUrl("http://schnorrbert.webege.com/get_all_notifications.php?identifier="+myImei);
+            Log.d(TAG, "json"+json.toString());
             pDialog.dismiss();
             try {
                 // Getting JSON Array
@@ -159,6 +160,7 @@ public class MainActivity extends ActionBarActivity
                     String first_name = c.getString("first_name");
                     String last_name = c.getString("last_name");
                     String note = c.getString("note");
+                    String identifier = c.getString("identifier");
                     allNames.add(first_name+" "+last_name);
                     allDebts.add(note);
 
