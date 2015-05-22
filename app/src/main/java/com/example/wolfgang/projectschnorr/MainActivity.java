@@ -1,5 +1,7 @@
 package com.example.wolfgang.projectschnorr;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -117,7 +119,19 @@ public class MainActivity extends ActionBarActivity
         if (identifier == null || identifier .length() == 0)
             identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
         Log.d(TAG, "IMEI or Identifier= "+identifier);
+        String testtt = tm.getLine1Number().toString();
+        Log.d(TAG, "meineNummer: "+testtt);
         myImei = identifier;
+
+        AccountManager am = AccountManager.get(this);
+        Account[] accounts = am.getAccounts();
+
+        for (Account ac : accounts) {
+            String acname = ac.name;
+            String actype = ac.type;
+            // Take your time to look at all available accounts
+            Log.d(TAG, "acname: "+acname+ "actype: "+actype);
+        }
     }
 
 
@@ -155,7 +169,6 @@ public class MainActivity extends ActionBarActivity
                 user = json.getJSONArray("user");
                 for(int i=0; i<user.length(); i++) {
                     JSONObject c = user.getJSONObject(i);
-
                     // Storing  JSON item in a Variable
                     String first_name = c.getString("first_name");
                     String last_name = c.getString("last_name");
