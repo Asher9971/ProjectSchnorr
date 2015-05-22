@@ -290,7 +290,7 @@ public class MainActivity extends ActionBarActivity
                 HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
                 return null;
             }catch(Exception e){
-                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
+                Log.d(TAG, "**** in Exception e im doInBackground: "+ e.toString());
             }
 
             return null;
