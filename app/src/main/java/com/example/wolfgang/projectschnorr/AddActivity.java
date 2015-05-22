@@ -11,8 +11,10 @@ import android.os.AsyncTask;
 import android.os.Looper;
 import android.provider.Contacts;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -79,12 +81,14 @@ public class AddActivity extends Activity
     int clickedName = 0;
     String newSchulden = "";
     TextView tv;
+    String myImei="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
+        getMyImei();
         fillListWithContacts();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -97,6 +101,17 @@ public class AddActivity extends Activity
                 
             }
         });
+    }
+
+    private void getMyImei(){
+        String identifier = null;
+        TelephonyManager tm = (TelephonyManager)this.getSystemService(this.TELEPHONY_SERVICE);
+        if (tm != null)
+            identifier = tm.getDeviceId();
+        if (identifier == null || identifier .length() == 0)
+            identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "IMEI or Identifier= "+identifier);
+        myImei = identifier;
     }
 
     public void fillListWithContacts(){
@@ -195,35 +210,48 @@ public class AddActivity extends Activity
     private class JSONPost extends AsyncTask<String, String, JSONObject> {
 
         //private ProgressDialog pDialog;
-        private final static String URL = "http://schnorrbert.webege.com/insert_notification.php";
+        private final static String URLinsert_notification = "http://schnorrbert.webege.com/insert_notification.php";
+        private final static String URLpush_identifier = "http://schnorrbert.webege.com/push_identifier.php";
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Log.d(TAG, "in onPreExecute im AsyncTask in AddActivity");
-            /*pDialog = new ProgressDialog(AddActivity.this);
-            pDialog.setMessage("Getting Data ...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();*/
-
+            //pDialog = new ProgressDialog(AddActivity.this);
+            //pDialog.setMessage("Getting Data ...");
+            //pDialog.setIndeterminate(false);
+            //pDialog.setCancelable(true);
+            //pDialog.show();
         }
 
         @Override
         protected JSONObject doInBackground(String... args) {
             Log.d(TAG, "doInBackground in AddActivity");
             DefaultHttpClient client = new DefaultHttpClient();
-            HttpPost request = new HttpPost(URL);
+            HttpPost request = new HttpPost(URLinsert_notification);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             String [] names = allnames.get(clickedName).split(" ");
             params.add(new BasicNameValuePair("first_name", ""+names[0]));
             params.add(new BasicNameValuePair("last_name", ""+names[1]));
-            params.add(new BasicNameValuePair("phone", "06504753150"));
+            params.add(new BasicNameValuePair("identifier", ""+myImei));
             params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
             params.add(new BasicNameValuePair("note", ""+newSchulden));
             try{
                 request.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = client.execute(request);
+                return null;
+            }catch(Exception e){
+                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
+            }
+
+            Log.d(TAG, "addInUser only identifier");
+            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
+            HttpPost requestIdentifier = new HttpPost(URLpush_identifier);
+            List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("identifier", ""+myImei));
+            try{
+                requestIdentifier.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse responseItentifier = client.execute(request);
                 return null;
             }catch(Exception e){
                 Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
