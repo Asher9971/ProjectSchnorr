@@ -2,10 +2,13 @@ package com.example.wolfgang.projectschnorr;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
+import android.os.Looper;
 import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
@@ -28,16 +31,40 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.zip.GZIPInputStream;
 
 
 public class AddActivity extends Activity
@@ -45,10 +72,12 @@ public class AddActivity extends Activity
     ListView lv;
     Cursor cursor1;
     Intent intent;
+    final static String TAG = "AddActivity";
     ArrayList <String> allnames = new ArrayList<String>();
     ArrayList <String> allnumbers = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
     int clickedName = 0;
+    String newSchulden = "";
     TextView tv;
 
     @Override
@@ -122,7 +151,8 @@ public class AddActivity extends Activity
                 .setView(layout)
                 .setPositiveButton("OK.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        String newSchulden = note.getText().toString();
+                        newSchulden = note.getText().toString();
+                        new JSONPost().execute();
                         setIntent(newSchulden);
                     }
                 })
@@ -160,6 +190,51 @@ public class AddActivity extends Activity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private class JSONPost extends AsyncTask<String, String, JSONObject> {
+
+        //private ProgressDialog pDialog;
+        private final static String URL = "http://192.168.14.177/insert_user.php";
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Log.d(TAG, "in onPreExecute im AsyncTask in AddActivity");
+            /*pDialog = new ProgressDialog(AddActivity.this);
+            pDialog.setMessage("Getting Data ...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();*/
+
+        }
+
+        @Override
+        protected JSONObject doInBackground(String... args) {
+            Log.d(TAG, "doInBackground in AddActivity");
+            DefaultHttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(URL);
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("first_name", "test1"));
+            params.add(new BasicNameValuePair("last_name", "test2"));
+            params.add(new BasicNameValuePair("phone", "039302"));
+            params.add(new BasicNameValuePair("phone_to", "2393204"));
+            params.add(new BasicNameValuePair("note", "asdfadf"));
+            try{
+                request.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse response = client.execute(request);
+                return null;
+            }catch(Exception e){
+                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            Log.d(TAG, "in onPostExecute in AddActivity");
+        }
     }
 
  }

@@ -28,6 +28,7 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
+    JSONParse mTask = new JSONParse();
     JSONArray user = null;
 
     @Override
@@ -35,7 +36,7 @@ public class MainActivity extends ActionBarActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
-        new JSONParse().execute();
+        mTask.execute();
     }
 
 
@@ -125,15 +126,14 @@ public class MainActivity extends ActionBarActivity
             JSONParser jParser = new JSONParser();
             Log.d(TAG, "in doInBackground im AsyncTask");
             // Getting JSON from URL
-            JSONObject json = jParser.getJSONFromUrl("http://10.10.107.56/get_all_user.php");
-            return json;
-        }
-        @Override
-        protected void onPostExecute(JSONObject json) {
+            JSONObject json = jParser.getJSONFromUrl("http://192.168.14.177/get_all_user.php");
             pDialog.dismiss();
             try {
                 // Getting JSON Array
                 Log.d(TAG, "in onPostExecute in AsyncTask");
+                if(json == null){
+                    Log.d(TAG, "json ist null");
+                }
                 user = json.getJSONArray("user");
                 for(int i=0; i<user.length(); i++) {
                     JSONObject c = user.getJSONObject(i);
@@ -142,15 +142,20 @@ public class MainActivity extends ActionBarActivity
                     String first_name = c.getString("first_name");
                     String last_name = c.getString("last_name");
                     String note = c.getString("note");
-                    everything.add(first_name + " " + last_name + ": " + note);
+                    allNames.add(first_name+" "+last_name);
+                    allDebts.add(note);
 
                     Log.d(TAG, "first_name = " + first_name);
                 }
-                fillList();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            return json;
+        }
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            Log.d(TAG, "in onPostExecute in MainActivity");
+            fillList();
         }
     }
 
