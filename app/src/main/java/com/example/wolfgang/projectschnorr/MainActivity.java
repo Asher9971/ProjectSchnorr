@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity
     String selectedName="";
     String selectedNote="";
     JSONParse mTask = new JSONParse();
-    JSONDelete dTask = new JSONDelete();
+    JSONDelete dTask;
     JSONArray user = null;
 
     @Override
@@ -56,7 +56,27 @@ public class MainActivity extends ActionBarActivity
         setContentView(R.layout.activity_main);
         list = (ListView) findViewById(R.id.listView);
         getMyImei();
-        registerForContextMenu(list);
+        registerForContextMenu(findViewById(R.id.listView));
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
+                Log.d(TAG, "in onItemLongClick methode von listview in MainActivity");
+                String temp = list.getItemAtPosition(index).toString();
+                String[] temp2 = temp.split(" ");
+                String selectedNameTemp = temp2[0] + " " + temp2[1];
+                String[] selectedNameTemp2 = selectedNameTemp.split(":");
+                selectedName = selectedNameTemp2[0];
+                Log.d(TAG, "selectedName: "+selectedNameTemp2[0]);
+                for(int i=3; i<temp2.length; i++)
+                {
+                    selectedNote = selectedNote+temp2[i]+" ";
+                }
+                Log.d(TAG, "selectedName= " + selectedName+ " selectedNote= "+selectedNote);
+                dTask = new JSONDelete();
+                dTask.execute();
+                return true;
+            }
+        });
         mTask.execute();
     }
 
@@ -64,6 +84,7 @@ public class MainActivity extends ActionBarActivity
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (v.getId()==R.id.listView){
+            Log.d(TAG, "in onCreateContextMenu");
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             menu.setHeaderTitle(allNames.get(info.position));
             String[] menuItems = {"DELETE", "INFO"};
@@ -71,19 +92,6 @@ public class MainActivity extends ActionBarActivity
                 menu.add(Menu.NONE, i, i, menuItems[i]);
             }
         }
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
-                String temp = list.getItemAtPosition(index).toString();
-                String[] temp2 = temp.split(" ");
-                String selectedNameTemp = temp2[0] + " " + temp2[1];
-                String[] selectedNameTemp2 = selectedNameTemp.split(":");
-                selectedName = selectedNameTemp2[0];
-                selectedNote = temp2[3];
-                Log.d(TAG, "selectedName= " + selectedName);
-                return true;
-            }
-        });
     }
 
 
@@ -97,7 +105,10 @@ public class MainActivity extends ActionBarActivity
         return true;
     }
 
-    private void deleteNotification() {
+    private void deleteNotification()
+    {
+        Log.d(TAG, "in deleteNotification");
+        JSONDelete dTask = new JSONDelete();
         dTask.execute();
     }
 
@@ -149,6 +160,16 @@ public class MainActivity extends ActionBarActivity
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+    public void loadAgain()
+    {
+        allNames = new ArrayList<>();
+        allDebts = new ArrayList<>();
+        mTask.cancel(true);
+        mTask = new JSONParse();
+        dTask = new JSONDelete();
+        dTask.cancel(true);
+        mTask.execute();
     }
 
     public void fillList()
@@ -248,7 +269,7 @@ public class MainActivity extends ActionBarActivity
 
     private class JSONDelete extends AsyncTask<String, String, JSONObject> {
         private ProgressDialog pDialog;
-        private final static String URLdelete_notification = "http://schnorrbert.webege.com/delete_notification.php";
+        private final static String URLdelete_notification = "http://schnorrbert.webege.com/delete_new.php";
 
         @Override
         protected void onPreExecute() {
@@ -267,39 +288,48 @@ public class MainActivity extends ActionBarActivity
 
         @Override
         protected JSONObject doInBackground(String... args) {
-            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
-            HttpPost requestIdentifier = new HttpPost(URLdelete_notification);
-            List<NameValuePair> paramsDelete = new ArrayList<NameValuePair>();
-            AddActivity aa = new AddActivity();
-            String phone_to ="";
-
-            for(int i=0; i<aa.allnames.size(); i++)
-            {
-                if(aa.allnames.get(i).equals(selectedName))
-                {
-                    phone_to = aa.allnumbers.get(i);
-                }
+            DefaultHttpClient client = new DefaultHttpClient();
+            HttpPost request = new HttpPost(URLdelete_notification);
+            String [] names = selectedName.split(" ");
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("identifier", ""+myImei));
+            params.add(new BasicNameValuePair("first_name", names[0]));
+            params.add(new BasicNameValuePair("last_name", names [1]));
+            params.add(new BasicNameValuePair("note", selectedNote));
+            Log.d(TAG, "identifier: " + myImei);
+            Log.d(TAG, "first_name: "+names[0]);
+            Log.d(TAG, "last_name: "+names[1]);
+            Log.d(TAG, "note: "+selectedNote);
+            try{
+                request.setEntity(new UrlEncodedFormEntity(params));
+                HttpResponse response = client.execute(request);
+                return null;
+            }catch(Exception e){
+                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
             }
 
-            paramsDelete.add(new BasicNameValuePair("identifier", ""+myImei));
-            paramsDelete.add(new BasicNameValuePair("phone_to", ""+phone_to));
-            paramsDelete.add(new BasicNameValuePair("note", ""+selectedNote));
-            //paramsDelete.add(new BasicNameValuePair("phone_to", ""+allNummbers.get()));
+            Log.d(TAG, "delete in doInBackground");
+            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
+            HttpPost requestIdentifier = new HttpPost(URLdelete_notification);
+            List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
+            paramsIdentifier.add(new BasicNameValuePair("identifier", ""+myImei));
             try{
-                //requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
+                requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
                 HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
                 return null;
             }catch(Exception e){
-                Log.d(TAG, "**** in Exception e im doInBackground: "+ e.toString());
+                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
             }
 
             return null;
+
         }
 
         @Override
         protected void onPostExecute(JSONObject json) {
             Log.d(TAG, "in onPostExecute in MainActivity");
-            fillList();
+            pDialog.dismiss();
+            loadAgain();
         }
     }
 }
