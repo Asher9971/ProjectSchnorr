@@ -43,9 +43,10 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
-    public String myImei="";
+    private String myImei="";
     String selectedName="";
     String selectedNote="";
+    private int position=0;
     JSONParse mTask = new JSONParse();
     JSONDelete dTask;
     JSONArray user = null;
@@ -57,34 +58,17 @@ public class MainActivity extends ActionBarActivity
         list = (ListView) findViewById(R.id.listView);
         getMyImei();
         registerForContextMenu(findViewById(R.id.listView));
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-
-            public boolean onItemLongClick(AdapterView<?> arg0, View v, int index, long arg3) {
-                Log.d(TAG, "in onItemLongClick methode von listview in MainActivity");
-                String temp = list.getItemAtPosition(index).toString();
-                String[] temp2 = temp.split(" ");
-                String selectedNameTemp = temp2[0] + " " + temp2[1];
-                String[] selectedNameTemp2 = selectedNameTemp.split(":");
-                selectedName = selectedNameTemp2[0];
-                Log.d(TAG, "selectedName: "+selectedNameTemp2[0]);
-                for(int i=3; i<temp2.length; i++)
-                {
-                    selectedNote = selectedNote+temp2[i]+" ";
-                }
-                Log.d(TAG, "selectedName= " + selectedName+ " selectedNote= "+selectedNote);
-                dTask = new JSONDelete();
-                dTask.execute();
-                return true;
-            }
-        });
         mTask.execute();
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        Log.d(TAG, "in onCreateContextMenu");
+        AdapterView.AdapterContextMenuInfo infoOfItem = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        position = infoOfItem.position;
         if (v.getId()==R.id.listView){
-            Log.d(TAG, "in onCreateContextMenu");
+            Log.d(TAG, "IN IF im onCreateContextMenu");
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             menu.setHeaderTitle(allNames.get(info.position));
             String[] menuItems = {"DELETE", "INFO"};
@@ -98,6 +82,7 @@ public class MainActivity extends ActionBarActivity
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int menuItemIndex = item.getItemId();
+        Log.d(TAG, "in onContextItemSelected");
         Log.d(TAG, "menuItemIndex= "+menuItemIndex);
         if(menuItemIndex==0){
             deleteNotification();
@@ -108,7 +93,18 @@ public class MainActivity extends ActionBarActivity
     private void deleteNotification()
     {
         Log.d(TAG, "in deleteNotification");
-        JSONDelete dTask = new JSONDelete();
+        String temp = list.getItemAtPosition(position).toString();
+        String[] temp2 = temp.split(" ");
+        String selectedNameTemp = temp2[0] + " " + temp2[1];
+        String[] selectedNameTemp2 = selectedNameTemp.split(":");
+        selectedName = selectedNameTemp2[0];
+        Log.d(TAG, "selectedName: "+selectedNameTemp2[0]);
+        for(int i=3; i<temp2.length; i++)
+        {
+            selectedNote = selectedNote+temp2[i]+" ";
+        }
+        Log.d(TAG, "selectedName= " + selectedName+ " selectedNote= "+selectedNote);
+        dTask = new JSONDelete();
         dTask.execute();
     }
 
@@ -163,12 +159,14 @@ public class MainActivity extends ActionBarActivity
     }
     public void loadAgain()
     {
+        selectedNote="";
+        selectedName="";
         allNames = new ArrayList<>();
         allDebts = new ArrayList<>();
         mTask.cancel(true);
         mTask = new JSONParse();
-        dTask = new JSONDelete();
         dTask.cancel(true);
+        dTask = new JSONDelete();
         mTask.execute();
     }
 
@@ -194,7 +192,7 @@ public class MainActivity extends ActionBarActivity
             identifier = tm.getDeviceId();
         if (identifier == null || identifier .length() == 0)
             identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.d(TAG, "IMEI or Identifier= "+identifier);
+        Log.d(TAG, "IMEI or Identifier= " + identifier);
         String testtt = tm.getLine1Number();
         Log.d(TAG, "meineNummer: "+testtt);
         myImei = identifier;
@@ -279,7 +277,7 @@ public class MainActivity extends ActionBarActivity
             //email1 = (TextView)findViewById(R.id.email);
             Log.d(TAG, "in onPreExecute im AsyncTask");
             pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Getting Data ...");
+            pDialog.setMessage("Lösche Notiz...");
             pDialog.setIndeterminate(false);
             pDialog.setCancelable(true);
             pDialog.show();
