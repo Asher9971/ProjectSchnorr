@@ -50,6 +50,7 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> everything = new ArrayList<String>();
     public SharedPreferences prefs;
     private String myImei="";
+    //Test
     String selectedName="";
     String selectedNote="";
     private int position=0;
