@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="&amp; Baumgartner Paskal"
+            android:text="&amp; Baumgartner Pascal"
             android:id="@+id/textView3" />
     </LinearLayout>
 

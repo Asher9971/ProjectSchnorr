@@ -18,7 +18,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/listView"
-            android:fastScrollEnabled="true" />
+            android:fastScrollEnabled="true"
+            android:layout_weight="1.79" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:layout_weight="0.15">
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="41dp"
+            android:text=" "
+            android:id="@+id/searchfor" />
     </LinearLayout>
 
 </LinearLayout>

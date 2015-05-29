@@ -1,8 +1,6 @@
 package com.example.wolfgang.projectschnorr;
 
-/**
- * Created by wolfgang on 20.05.15.
- */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

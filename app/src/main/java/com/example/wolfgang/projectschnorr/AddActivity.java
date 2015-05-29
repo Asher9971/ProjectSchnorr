@@ -15,6 +15,8 @@ import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,6 +27,8 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -64,6 +68,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.jar.Attributes;
 import java.util.zip.GZIPInputStream;
@@ -84,6 +90,11 @@ public class AddActivity extends Activity
     String newSchulden = "";
     TextView tv;
     String myImei="";
+
+    EditText search;
+    ArrayList<String> searchnames = new ArrayList<String>();
+    ArrayList<String> filteredNames = new ArrayList<String>();
+    String [] filternames = new String[100];
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -122,6 +133,7 @@ public class AddActivity extends Activity
     {
 
         Cursor cursor = getContentResolver().query(   ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,null, null);
+        int i = 0;
         while (cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
             name = name+" .";
@@ -175,7 +187,7 @@ public class AddActivity extends Activity
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(allnames.get(clickedName)+" Schuldet Ihnen: ")
-                .setCancelable(true)
+                .setCancelable(false)
                 .setView(layout)
                 .setPositiveButton("OK.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -282,5 +294,6 @@ public class AddActivity extends Activity
             Log.d(TAG, "in onPostExecute in AddActivity");
         }
     }
+
 
  }
