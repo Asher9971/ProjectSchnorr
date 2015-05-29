@@ -39,7 +39,8 @@ public class MainActivity extends ActionBarActivity
 
     ListView list;
     public static final String TAG = "MainActivity";
-    public ArrayList<String> allNames = new ArrayList<String>();
+    public ArrayList<String> allFirstNames = new ArrayList<String>();
+    public ArrayList<String> allLastNames = new ArrayList<String>();
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
@@ -70,7 +71,7 @@ public class MainActivity extends ActionBarActivity
         if (v.getId()==R.id.listView){
             Log.d(TAG, "IN IF im onCreateContextMenu");
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
-            menu.setHeaderTitle(allNames.get(info.position));
+            menu.setHeaderTitle(allFirstNames.get(info.position)+" "+allLastNames.get(info.position));
             String[] menuItems = {"DELETE", "INFO"};
             for (int i = 0; i<menuItems.length; i++) {
                 menu.add(Menu.NONE, i, i, menuItems[i]);
@@ -92,18 +93,6 @@ public class MainActivity extends ActionBarActivity
 
     private void deleteNotification()
     {
-        Log.d(TAG, "in deleteNotification");
-        String temp = list.getItemAtPosition(position).toString();
-        String[] temp2 = temp.split(" ");
-        String selectedNameTemp = temp2[0] + " " + temp2[1];
-        String[] selectedNameTemp2 = selectedNameTemp.split(":");
-        selectedName = selectedNameTemp2[0];
-        Log.d(TAG, "selectedName: "+selectedNameTemp2[0]);
-        for(int i=3; i<temp2.length; i++)
-        {
-            selectedNote = selectedNote+temp2[i]+" ";
-        }
-        Log.d(TAG, "selectedName= " + selectedName+ " selectedNote= "+selectedNote);
         dTask = new JSONDelete();
         dTask.execute();
     }
@@ -130,6 +119,11 @@ public class MainActivity extends ActionBarActivity
             startActivityForResult(intent, REQUEST_CODE);
             return true;
         }
+        if(id == R.id.action_about)
+        {
+            Intent intent = new Intent(this, AboutActivity.class);
+            startActivityForResult(intent, REQUEST_CODE);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -143,11 +137,13 @@ public class MainActivity extends ActionBarActivity
             Bundle params = data.getExtras();
             if (params != null)
             {
-                CharSequence name = params.getCharSequence("name");
+                CharSequence first_name = params.getCharSequence("first_name");
+                CharSequence last_name = params.getCharSequence("last_name");
                 CharSequence schulden = params.getCharSequence("schulden");
                 CharSequence nummer = params.getCharSequence("nummer");
 
-                allNames.add(name.toString());
+                allFirstNames.add(first_name.toString());
+                allLastNames.add(last_name.toString());
                 allDebts.add(schulden.toString());
                 allNummbers.add(nummer.toString());
 
@@ -159,9 +155,8 @@ public class MainActivity extends ActionBarActivity
     }
     public void loadAgain()
     {
-        selectedNote="";
-        selectedName="";
-        allNames = new ArrayList<>();
+        allFirstNames = new ArrayList<>();
+        allLastNames = new ArrayList<>();
         allDebts = new ArrayList<>();
         mTask.cancel(true);
         mTask = new JSONParse();
@@ -174,9 +169,9 @@ public class MainActivity extends ActionBarActivity
     {
         Log.d(TAG, "in fillList***********");
         everything = new ArrayList<String>();
-        for (int i = 0; i < allNames.size(); i++)
+        for (int i = 0; i < allFirstNames.size(); i++)
         {
-            everything.add(allNames.get(i).toString() + ":  " + allDebts.get(i).toString());
+            everything.add(allFirstNames.get(i).toString() + " " + allLastNames.get(i).toString() + ":  " + allDebts.get(i).toString());
             Log.d(TAG, "in for:  " + everything.get(i));
         }
 
@@ -214,9 +209,6 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //uid = (TextView)findViewById(R.id.uid);
-            //name1 = (TextView)findViewById(R.id.name);
-            //email1 = (TextView)findViewById(R.id.email);
             Log.d(TAG, "in onPreExecute im AsyncTask");
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Getting Data ...");
@@ -248,7 +240,8 @@ public class MainActivity extends ActionBarActivity
                     String last_name = c.getString("last_name");
                     String note = c.getString("note");
                     String identifier = c.getString("identifier");
-                    allNames.add(first_name+" "+last_name);
+                    allFirstNames.add(first_name);
+                    allLastNames.add(last_name);
                     allDebts.add(note);
 
                     Log.d(TAG, "first_name = " + first_name);
@@ -272,9 +265,6 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //uid = (TextView)findViewById(R.id.uid);
-            //name1 = (TextView)findViewById(R.id.name);
-            //email1 = (TextView)findViewById(R.id.email);
             Log.d(TAG, "in onPreExecute im AsyncTask");
             pDialog = new ProgressDialog(MainActivity.this);
             pDialog.setMessage("Lösche Notiz...");
@@ -288,16 +278,15 @@ public class MainActivity extends ActionBarActivity
         protected JSONObject doInBackground(String... args) {
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost request = new HttpPost(URLdelete_notification);
-            String [] names = selectedName.split(" ");
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             params.add(new BasicNameValuePair("identifier", ""+myImei));
-            params.add(new BasicNameValuePair("first_name", names[0]));
-            params.add(new BasicNameValuePair("last_name", names [1]));
-            params.add(new BasicNameValuePair("note", selectedNote));
+            params.add(new BasicNameValuePair("first_name", allFirstNames.get(position)));
+            params.add(new BasicNameValuePair("last_name", allLastNames.get(position)));
+            params.add(new BasicNameValuePair("note", allDebts.get(position)));
             Log.d(TAG, "identifier: " + myImei);
-            Log.d(TAG, "first_name: "+names[0]);
-            Log.d(TAG, "last_name: "+names[1]);
-            Log.d(TAG, "note: "+selectedNote);
+            Log.d(TAG, "first_name: "+allFirstNames.get(position));
+            Log.d(TAG, "last_name: "+allLastNames.get(position));
+            Log.d(TAG, "note: "+allDebts.get(position));
             try{
                 request.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = client.execute(request);

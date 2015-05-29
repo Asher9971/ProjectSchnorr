@@ -75,8 +75,10 @@ public class AddActivity extends Activity
     Cursor cursor1;
     Intent intent;
     final static String TAG = "AddActivity";
-    public ArrayList <String> allnames = new ArrayList<String>();
+    public ArrayList <String> allFirstNames = new ArrayList<String>();
+    public ArrayList <String> allLastNames = new ArrayList<String>();
     public ArrayList <String> allnumbers = new ArrayList<String>();
+    public ArrayList <String> allnames = new ArrayList<String>();
     ArrayAdapter <String> arrayadapter;
     int clickedName = 0;
     String newSchulden = "";
@@ -84,7 +86,8 @@ public class AddActivity extends Activity
     String myImei="";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
@@ -103,7 +106,8 @@ public class AddActivity extends Activity
         });
     }
 
-    private void getMyImei(){
+    private void getMyImei()
+    {
         String identifier = null;
         TelephonyManager tm = (TelephonyManager)this.getSystemService(this.TELEPHONY_SERVICE);
         if (tm != null)
@@ -114,13 +118,20 @@ public class AddActivity extends Activity
         myImei = identifier;
     }
 
-    public void fillListWithContacts(){
+    public void fillListWithContacts()
+    {
 
         Cursor cursor = getContentResolver().query(   ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,null, null);
         while (cursor.moveToNext()) {
             String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            name = name+" .";
+            String [] names = name.split(" ");
+            String first_name = names[0];
+            String last_name = names[1];
             String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            allnames.add(name);
+            allFirstNames.add(first_name);
+            allLastNames.add(last_name);
+            allnames.add(first_name+" "+last_name);
             allnumbers.add(number);
         }
         arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
@@ -131,13 +142,15 @@ public class AddActivity extends Activity
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_add, menu);
         return true;
     }
 
-    private void showAddDialog(){
+    private void showAddDialog()
+    {
         final EditText txtName = new EditText(this);
         final Spinner howto = new Spinner(this);
         final boolean ok = false;
@@ -183,64 +196,65 @@ public class AddActivity extends Activity
     }
 
 
-    public void setIntent(String input){
+    public void setIntent(String input)
+    {
         intent = new Intent();
         intent.putExtra("schulden", input);
-        intent.putExtra("name", allnames.get(clickedName));
+        intent.putExtra("first_name", allFirstNames.get(clickedName));
+        intent.putExtra("last_name", allLastNames.get(clickedName));
         intent.putExtra("nummer", allnumbers.get(clickedName));
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_settings)
+        {
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private class JSONPost extends AsyncTask<String, String, JSONObject> {
-
-        //private ProgressDialog pDialog;
+    private class JSONPost extends AsyncTask<String, String, JSONObject>
+    {
         private final static String URLinsert_notification = "http://schnorrbert.webege.com/insert_notification.php";
         private final static String URLpush_identifier = "http://schnorrbert.webege.com/push_identifier.php";
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute()
+        {
             super.onPreExecute();
             Log.d(TAG, "in onPreExecute im AsyncTask in AddActivity");
-            //pDialog = new ProgressDialog(AddActivity.this);
-            //pDialog.setMessage("Getting Data ...");
-            //pDialog.setIndeterminate(false);
-            //pDialog.setCancelable(true);
-            //pDialog.show();
         }
 
         @Override
-        protected JSONObject doInBackground(String... args) {
+        protected JSONObject doInBackground(String... args)
+        {
             Log.d(TAG, "doInBackground in AddActivity");
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost request = new HttpPost(URLinsert_notification);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            String [] names = allnames.get(clickedName).split(" ");
-            params.add(new BasicNameValuePair("first_name", ""+names[0]));
-            params.add(new BasicNameValuePair("last_name", ""+names[1]));
+            params.add(new BasicNameValuePair("first_name", ""+allFirstNames.get(clickedName)));
+            params.add(new BasicNameValuePair("last_name", ""+allLastNames.get(clickedName)));
             params.add(new BasicNameValuePair("identifier", ""+myImei));
             params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
             params.add(new BasicNameValuePair("note", ""+newSchulden));
-            try{
+            try
+            {
                 request.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = client.execute(request);
                 return null;
-            }catch(Exception e){
+            }catch(Exception e)
+            {
                 Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
             }
 
@@ -249,11 +263,13 @@ public class AddActivity extends Activity
             HttpPost requestIdentifier = new HttpPost(URLpush_identifier);
             List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
             paramsIdentifier.add(new BasicNameValuePair("identifier", ""+myImei));
-            try{
+            try
+            {
                 requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
                 HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
                 return null;
-            }catch(Exception e){
+            }catch(Exception e)
+            {
                 Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
             }
 
@@ -261,7 +277,8 @@ public class AddActivity extends Activity
         }
 
         @Override
-        protected void onPostExecute(JSONObject json) {
+        protected void onPostExecute(JSONObject json)
+        {
             Log.d(TAG, "in onPostExecute in AddActivity");
         }
     }
