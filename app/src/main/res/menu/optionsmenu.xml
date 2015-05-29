@@ -14,4 +14,9 @@
         android:icon="@android:drawable/ic_menu_edit"
         app:showAsAction="always"/>
 
+    <item android:id="@+id/preferences"
+        android:title="Preferences"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="always"/>
+
 </menu>

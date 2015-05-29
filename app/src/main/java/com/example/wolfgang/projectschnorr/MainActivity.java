@@ -5,7 +5,9 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -30,6 +33,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.PreferenceChangeEvent;
 
 
 public class MainActivity extends ActionBarActivity
@@ -44,6 +48,7 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allDebts = new ArrayList<String>();
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
+    public SharedPreferences prefs;
     private String myImei="";
     String selectedName="";
     String selectedNote="";
@@ -56,9 +61,11 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         list = (ListView) findViewById(R.id.listView);
         getMyImei();
         registerForContextMenu(findViewById(R.id.listView));
+        askForPhoneNumber();
         mTask.execute();
     }
 
@@ -77,6 +84,16 @@ public class MainActivity extends ActionBarActivity
                 menu.add(Menu.NONE, i, i, menuItems[i]);
             }
         }
+    }
+
+    public void askForPhoneNumber()
+    {
+        String phoneNumber = prefs.getString("number", "");
+        if(phoneNumber.equals(""))
+        {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }
+        Toast.makeText(this, "Nummer: "+phoneNumber, Toast.LENGTH_LONG).show();
     }
 
 
@@ -124,6 +141,11 @@ public class MainActivity extends ActionBarActivity
             Intent intent = new Intent(this, AboutActivity.class);
             startActivityForResult(intent, REQUEST_CODE);
         }
+        if(id == R.id.preferences)
+        {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -146,7 +168,6 @@ public class MainActivity extends ActionBarActivity
                 allLastNames.add(last_name.toString());
                 allDebts.add(schulden.toString());
                 allNummbers.add(nummer.toString());
-
                 fillList();
             }
         }
