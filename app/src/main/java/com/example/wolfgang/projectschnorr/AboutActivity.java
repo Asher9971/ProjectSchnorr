@@ -1,5 +1,6 @@
 package com.example.wolfgang.projectschnorr;
 
+import android.app.Activity;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.ActionBarActivity;
@@ -8,21 +9,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class AboutActivity extends PreferenceActivity {
+public class AboutActivity extends Activity {
 
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
-    }
-
-    public static class MyPreferenceFragment extends PreferenceFragment
-    {
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+        public void onCreate(Bundle savedInstanceState)
+        {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.pref_general);
+            setContentView(R.layout.activity_about);
         }
-    }
 }

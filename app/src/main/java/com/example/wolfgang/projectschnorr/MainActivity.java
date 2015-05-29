@@ -98,6 +98,7 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int menuItemIndex = item.getItemId();
@@ -129,25 +130,23 @@ public class MainActivity extends ActionBarActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        switch (id)
+        {
+            case R.id.action_add:
+                Intent intentAdd = new Intent(this, AddActivity.class);
+                startActivityForResult(intentAdd, REQUEST_CODE);
+                break;
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_add)
-        {
-            Intent intent = new Intent(this, AddActivity.class);
-            startActivityForResult(intent, REQUEST_CODE);
-            return true;
-        }
-        if(id == R.id.action_about)
-        {
-            Intent intent = new Intent(this, AboutActivity.class);
-            startActivityForResult(intent, REQUEST_CODE);
-        }
-        if(id == R.id.preferences)
-        {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        }
+            case R.id.action_about:
+                Intent intentAbout = new Intent(this, AboutActivity.class);
+                startActivityForResult(intentAbout, REQUEST_CODE);
+                break;
 
+            case R.id.action_prefs:
+                Intent intentSettings = new Intent(this, SettingsActivity.class);
+                startActivity(intentSettings);
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 
