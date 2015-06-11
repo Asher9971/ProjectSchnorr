@@ -9,6 +9,7 @@ import android.os.IBinder;
  */
 public class MyService extends Service
 {
+    //´test
     @Override
     public void onCreate()
     {
