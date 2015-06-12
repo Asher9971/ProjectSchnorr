@@ -6,9 +6,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.provider.Settings;
@@ -240,12 +242,14 @@ public class AddActivity extends Activity
     {
         private final static String URLinsert_notification = "http://schnorrbert.webege.com/insert_notification.php";
         private final static String URLpush_identifier = "http://schnorrbert.webege.com/push_identifier.php";
+        SharedPreferences prefs;
 
         @Override
         protected void onPreExecute()
         {
             super.onPreExecute();
             Log.d(TAG, "in onPreExecute im AsyncTask in AddActivity");
+            prefs = PreferenceManager.getDefaultSharedPreferences(AddActivity.this);
         }
 
         @Override
@@ -259,6 +263,7 @@ public class AddActivity extends Activity
             params.add(new BasicNameValuePair("last_name", ""+allLastNames.get(clickedName)));
             params.add(new BasicNameValuePair("identifier", ""+myImei));
             params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
+            params.add(new BasicNameValuePair("phone_from", ""+prefs.getString("number", "")));
             params.add(new BasicNameValuePair("note", ""+newSchulden));
             try
             {

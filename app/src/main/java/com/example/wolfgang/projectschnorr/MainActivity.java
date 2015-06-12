@@ -89,21 +89,23 @@ public class MainActivity extends ActionBarActivity
 
     public void askForPhoneNumber()
     {
-        phoneNumber = prefs.getString("number", "");
-        int length = phoneNumber.length();
-        if(phoneNumber.startsWith("+"))
-        {
-            phoneNumber = phoneNumber.substring(4,length);
-        }else {
-            phoneNumber = phoneNumber.substring(2, length);
+        try {
+            phoneNumber = prefs.getString("number", "");
+            int length = phoneNumber.length();
+            if (phoneNumber.startsWith("+")) {
+                phoneNumber = phoneNumber.substring(4, length);
+            } else {
+                phoneNumber = phoneNumber.substring(2, length);
+            }
+            if (phoneNumber.equals("")) {
+                startActivity(new Intent(this, SettingsActivity.class));
+            }
+            lTask = new JSONPushIdentifier();
+            lTask.execute();
+            Toast.makeText(this, "Nummer: " + phoneNumber, Toast.LENGTH_LONG).show();
+        }catch(Exception e){
+            Toast.makeText(this, "Nummer bitte in den Einstellungen eingeben für vollständige Funktionsfähigkeit", Toast.LENGTH_LONG).show();
         }
-        if(phoneNumber.equals(""))
-        {
-            startActivity(new Intent(this, SettingsActivity.class));
-        }
-        lTask = new JSONPushIdentifier();
-        lTask.execute();
-        Toast.makeText(this, "Nummer: "+phoneNumber, Toast.LENGTH_LONG).show();
     }
 
 
