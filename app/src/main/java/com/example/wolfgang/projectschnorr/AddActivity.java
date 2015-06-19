@@ -274,15 +274,16 @@ public class AddActivity extends Activity
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             if(ihm_mir.equals("Er - Mir")) {
                 params.add(new BasicNameValuePair("first_name", "from " + allFirstNames.get(clickedName)));
+                params.add(new BasicNameValuePair("ownfirst_name", "to "+ownfirst_name));
             }else{
                 params.add(new BasicNameValuePair("first_name", "to " + allFirstNames.get(clickedName)));
+                params.add(new BasicNameValuePair("ownfirst_name", "from "+ownfirst_name));
             }
             params.add(new BasicNameValuePair("last_name", ""+allLastNames.get(clickedName)));
             params.add(new BasicNameValuePair("identifier", ""+myImei));
             params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
             params.add(new BasicNameValuePair("phone_from", ""+prefs.getString("number", "")));
             params.add(new BasicNameValuePair("note", "" + newSchulden));
-            params.add(new BasicNameValuePair("ownfirst_name", ""+ownfirst_name));
             params.add(new BasicNameValuePair("ownlast_name", ""+ownlast_name));
 
             try
