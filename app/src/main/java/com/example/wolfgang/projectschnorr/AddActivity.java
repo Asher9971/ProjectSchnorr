@@ -92,6 +92,10 @@ public class AddActivity extends Activity
     String newSchulden = "";
     TextView tv;
     String myImei="";
+    String ihm_mir="";
+    String ownfirst_name="";
+    String ownlast_name="";
+    public SharedPreferences prefs;
 
     EditText search;
     ArrayList<String> searchnames = new ArrayList<String>();
@@ -105,6 +109,7 @@ public class AddActivity extends Activity
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
         getMyImei();
+        getMyName();
         fillListWithContacts();
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -119,6 +124,13 @@ public class AddActivity extends Activity
         });
     }
 
+    private void getMyName()
+    {
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        ownfirst_name = prefs.getString("first_name", "");
+        ownlast_name = prefs.getString("last_name", "");
+    }
+
     private void getMyImei()
     {
         String identifier = null;
@@ -127,7 +139,7 @@ public class AddActivity extends Activity
             identifier = tm.getDeviceId();
         if (identifier == null || identifier .length() == 0)
             identifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
-        Log.d(TAG, "IMEI or Identifier= "+identifier);
+        Log.d(TAG, "IMEI or Identifier= " + identifier);
         myImei = identifier;
     }
 
@@ -173,7 +185,7 @@ public class AddActivity extends Activity
         layout.setOrientation(LinearLayout.VERTICAL);
 
         final Spinner whoto = new Spinner(this);
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
+        final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, android.R.id.text1);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         whoto.setAdapter(spinnerAdapter);
         spinnerAdapter.add("Ich - Ihm");
@@ -193,6 +205,8 @@ public class AddActivity extends Activity
                 .setView(layout)
                 .setPositiveButton("OK.", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        ihm_mir = whoto.getSelectedItem().toString();
+                        Log.d(TAG, "ihm_mir: "+ihm_mir);
                         newSchulden = note.getText().toString();
                         new JSONPost().execute();
                         setIntent(newSchulden);
@@ -241,7 +255,6 @@ public class AddActivity extends Activity
     private class JSONPost extends AsyncTask<String, String, JSONObject>
     {
         private final static String URLinsert_notification = "http://schnorrbert.webege.com/insert_notification.php";
-        private final static String URLpush_identifier = "http://schnorrbert.webege.com/push_identifier.php";
         SharedPreferences prefs;
 
         @Override
@@ -259,31 +272,23 @@ public class AddActivity extends Activity
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost request = new HttpPost(URLinsert_notification);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("first_name", ""+allFirstNames.get(clickedName)));
+            if(ihm_mir.equals("Er - Mir")) {
+                params.add(new BasicNameValuePair("first_name", "from " + allFirstNames.get(clickedName)));
+            }else{
+                params.add(new BasicNameValuePair("first_name", "to " + allFirstNames.get(clickedName)));
+            }
             params.add(new BasicNameValuePair("last_name", ""+allLastNames.get(clickedName)));
             params.add(new BasicNameValuePair("identifier", ""+myImei));
             params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
             params.add(new BasicNameValuePair("phone_from", ""+prefs.getString("number", "")));
-            params.add(new BasicNameValuePair("note", ""+newSchulden));
+            params.add(new BasicNameValuePair("note", "" + newSchulden));
+            params.add(new BasicNameValuePair("ownfirst_name", ""+ownfirst_name));
+            params.add(new BasicNameValuePair("ownlast_name", ""+ownlast_name));
+
             try
             {
                 request.setEntity(new UrlEncodedFormEntity(params));
                 HttpResponse response = client.execute(request);
-                return null;
-            }catch(Exception e)
-            {
-                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
-            }
-
-            Log.d(TAG, "addInUser only identifier");
-            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
-            HttpPost requestIdentifier = new HttpPost(URLpush_identifier);
-            List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
-            paramsIdentifier.add(new BasicNameValuePair("identifier", ""+myImei));
-            try
-            {
-                requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
-                HttpResponse responseIdentifier = clientIdentifier.execute(requestIdentifier);
                 return null;
             }catch(Exception e)
             {
@@ -299,6 +304,5 @@ public class AddActivity extends Activity
             Log.d(TAG, "in onPostExecute in AddActivity");
         }
     }
-
 
  }

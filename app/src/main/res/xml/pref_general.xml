@@ -12,5 +12,27 @@
         android:singleLine="true"
         android:maxLines="1" />
 
+    <EditTextPreference
+        android:key="first_name"
+        android:title="Vorname"
+        android:defaultValue=""
+        android:hint="Input your Name"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:maxLines="1" />
+
+    <EditTextPreference
+        android:key="last_name"
+        android:title="Nachname"
+        android:defaultValue=""
+        android:hint="Input your Name"
+        android:selectAllOnFocus="true"
+        android:inputType="textCapWords"
+        android:capitalize="words"
+        android:singleLine="true"
+        android:maxLines="1" />
+
 
 </PreferenceScreen>

@@ -55,7 +55,7 @@ public class MainActivity extends ActionBarActivity
     private int position=0;
     JSONParse mTask = new JSONParse();
     JSONDelete dTask;
-    JSONPushIdentifier lTask;
+    JSONPushIdentifier lTask = new JSONPushIdentifier();
     JSONArray user = null;
 
     @Override
@@ -68,6 +68,7 @@ public class MainActivity extends ActionBarActivity
         registerForContextMenu(findViewById(R.id.listView));
         askForPhoneNumber();
         mTask.execute();
+        lTask.execute();
     }
 
     @Override
@@ -100,8 +101,6 @@ public class MainActivity extends ActionBarActivity
             if (phoneNumber.equals("")) {
                 startActivity(new Intent(this, SettingsActivity.class));
             }
-            lTask = new JSONPushIdentifier();
-            lTask.execute();
             Toast.makeText(this, "Nummer: " + phoneNumber, Toast.LENGTH_LONG).show();
         }catch(Exception e){
             Toast.makeText(this, "Nummer bitte in den Einstellungen eingeben für vollständige Funktionsfähigkeit", Toast.LENGTH_LONG).show();
@@ -199,6 +198,7 @@ public class MainActivity extends ActionBarActivity
 
     public void fillList()
     {
+        mTask.cancel(true);
         Log.d(TAG, "in fillList***********");
         everything = new ArrayList<String>();
         for (int i = 0; i < allFirstNames.size(); i++)
@@ -281,6 +281,7 @@ public class MainActivity extends ActionBarActivity
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
             return json;
         }
         @Override
@@ -340,50 +341,31 @@ public class MainActivity extends ActionBarActivity
 
 
     private class JSONPushIdentifier extends AsyncTask<String, String, JSONObject> {
-        private ProgressDialog pDialog;
         private final static String URLpush_identifier = "http://schnorrbert.webege.com/push_identifier.php";
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Log.d(TAG, "in onPreExecute im AsyncTask");
-            pDialog = new ProgressDialog(MainActivity.this);
-            pDialog.setMessage("Login...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-
+            Log.d(TAG, "in onPreExecute im AsyncTask JSONPushIdentifier");
         }
 
         @Override
         protected JSONObject doInBackground(String... args) {
-            DefaultHttpClient client = new DefaultHttpClient();
-            HttpPost request = new HttpPost(URLpush_identifier);
-            List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("identifier", ""+myImei));
-            params.add(new BasicNameValuePair("phone_nr", phoneNumber));
-            Log.d(TAG, "identifier im pushIdentifier: "+myImei);
-            Log.d(TAG, "phoneNumber im pushIdentifier: "+phoneNumber);
+            Log.d(TAG, "in doInBackground in JSONPushIdentifier");
+            DefaultHttpClient clientIdentifier = new DefaultHttpClient();
+            HttpPost requestIdentifier = new HttpPost(URLpush_identifier);
+            List<NameValuePair> paramsIdentifier = new ArrayList<NameValuePair>();
+            paramsIdentifier.add(new BasicNameValuePair("identifier", ""+myImei));
+            paramsIdentifier.add(new BasicNameValuePair("phone_nr", ""+phoneNumber));
+            Log.d(TAG, "identifier im pushIdentifier: " + myImei);
+            Log.d(TAG, "phoneNumber im pushIdentifier: " + phoneNumber);
             try{
-                request.setEntity(new UrlEncodedFormEntity(params));
-                HttpResponse response = client.execute(request);
+                requestIdentifier.setEntity(new UrlEncodedFormEntity(paramsIdentifier));
+                HttpResponse response = clientIdentifier.execute(requestIdentifier);
+                Log.d(TAG, "response: "+response.getEntity());
                 return null;
-            }catch(Exception e){
-                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
-            }
-
-            Log.d(TAG, "delete in doInBackground");
-            DefaultHttpClient clientPushIdentifier = new DefaultHttpClient();
-            HttpPost requestPushIdentifier = new HttpPost(URLpush_identifier);
-            List<NameValuePair> paramsPushIdentifier = new ArrayList<NameValuePair>();
-            paramsPushIdentifier.add(new BasicNameValuePair("identifier", "" + myImei));
-            paramsPushIdentifier.add(new BasicNameValuePair("phone_nr", "" + phoneNumber));
-            try{
-                requestPushIdentifier.setEntity(new UrlEncodedFormEntity(paramsPushIdentifier));
-                HttpResponse responseIdentifier = clientPushIdentifier.execute(requestPushIdentifier);
-                return null;
-            }catch(Exception e){
-                Log.d(TAG, "**** in Exception e in doInBackground: "+ e.toString());
+            }catch(Exception e) {
+                Log.d(TAG, "**** in Exception e in doInBackground: " + e.toString());
             }
 
             return null;
@@ -393,7 +375,6 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(JSONObject json) {
             Log.d(TAG, "in onPostExecute in MainActivity");
-            pDialog.dismiss();
         }
     }
 }
