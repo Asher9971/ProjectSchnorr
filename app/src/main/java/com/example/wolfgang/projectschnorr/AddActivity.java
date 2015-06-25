@@ -108,9 +108,22 @@ public class AddActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
+        search = (EditText) findViewById(R.id.editTextSearch);
         getMyImei();
         getMyName();
         fillListWithContacts();
+
+        search.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                String input = search.getText().toString();
+                refreshListView(input);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
 
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -122,6 +135,33 @@ public class AddActivity extends Activity
                 
             }
         });
+    }
+
+    private void refreshListView(String input)
+    {
+        allFirstNames = new ArrayList<>();
+        allLastNames = new ArrayList<>();
+        allnumbers = new ArrayList<>();
+        allnames = new ArrayList<>();
+        Cursor cursor = getContentResolver().query(   ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null,null, null);
+        int i = 0;
+        while (cursor.moveToNext()) {
+            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            name = name+" .";
+            String [] names = name.split(" ");
+            String first_name = names[0];
+            String last_name = names[1];
+            String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            if(first_name.contains(input) || last_name.contains(input)) {
+                allFirstNames.add(first_name);
+                allLastNames.add(last_name);
+                allnames.add(first_name+" "+last_name);
+                allnumbers.add(number);
+            }
+        }
+        arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
+        lv.setAdapter(arrayadapter);
+        cursor.close();
     }
 
     private void getMyName()
@@ -290,6 +330,10 @@ public class AddActivity extends Activity
             } else {
                 phone_from = phone_from.substring(2, length);
             }
+            phone_to = phone_to.replace("-", "");
+            phone_from = phone_from.replace("-","");
+            phone_to = phone_to.replace(" ", "");
+            phone_from = phone_from.replace(" ","");
 
             if(ihm_mir.equals("Er - Mir")) {
                 params.add(new BasicNameValuePair("first_name", "from " + allFirstNames.get(clickedName)));
