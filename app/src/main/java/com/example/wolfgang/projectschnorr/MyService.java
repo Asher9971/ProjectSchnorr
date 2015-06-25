@@ -30,7 +30,7 @@ public class MyService extends Service
     ArrayList<String> allFirstNames;
     ArrayList<String> allLastNames;
     ArrayList<String> allDebts;
-    boolean first = true;
+    boolean first;
     JSONParse jTask;
     int length = MainActivity.LENGTH;
     JSONArray user = null;
@@ -40,7 +40,7 @@ public class MyService extends Service
     public void onCreate()
     {
         super.onCreate();
-
+        first = true;
         Log.d(TAG, "im onCreate im MyService und länge = " + length);
     }
 
@@ -61,7 +61,7 @@ public class MyService extends Service
                         allDebts = new ArrayList<>();
                         jTask = new JSONParse();
                         jTask.execute();
-                        sleep(20000);
+                        sleep(60000);
                     }catch(Exception ex){
                         Log.d(TAG, "in der Exception im Thread");
                     }
@@ -149,7 +149,7 @@ public class MyService extends Service
             if(length<allFirstNames.size()){
                 final NotificationManager manager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
                 final Notification note = new Notification(
-                        R.drawable.launchericon, "aktiv", System.currentTimeMillis());
+                        R.drawable.launchericon2, "aktiv", System.currentTimeMillis());
                 Intent i = new Intent(getApplicationContext(),MainActivity.class);
                 final PendingIntent intent = PendingIntent.getActivity(getApplicationContext(), 0, i, 0);
                 note.setLatestEventInfo(getApplicationContext(), "Schnorrbert", "für neue Benachrichtigung hier klicken", intent);

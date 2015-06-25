@@ -29,8 +29,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="265dp"
-        android:layout_weight="0.36"
+        android:layout_height="match_parent"
         android:weightSum="1">
 
         <ListView

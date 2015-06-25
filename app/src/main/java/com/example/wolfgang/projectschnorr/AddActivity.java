@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Looper;
 import android.preference.PreferenceManager;
@@ -109,6 +110,11 @@ public class AddActivity extends Activity
         setContentView(R.layout.activity_add);
         lv = (ListView) findViewById(R.id.listView);
         search = (EditText) findViewById(R.id.editTextSearch);
+        //Schriftart ändern
+        Typeface type = Typeface.createFromAsset(getAssets(),"lastcall.ttf");
+        search.setTypeface(type);
+        search.setTextSize(22);
+
         getMyImei();
         getMyName();
         fillListWithContacts();
@@ -159,8 +165,12 @@ public class AddActivity extends Activity
                 allnumbers.add(number);
             }
         }
-        arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
-        lv.setAdapter(arrayadapter);
+        String [] all_array = new String [allnames.size()];
+        for(int j=0; j<allnames.size();j++){
+            all_array[j] = allnames.get(j).toString();
+        }
+        CustomAdapter listAdapter = new CustomAdapter(this, R.layout.custom_list_text, all_array, "lastcall.ttf");
+        lv.setAdapter(listAdapter);
         cursor.close();
     }
 
@@ -200,8 +210,12 @@ public class AddActivity extends Activity
             allnames.add(first_name+" "+last_name);
             allnumbers.add(number);
         }
-        arrayadapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, allnames);
-        lv.setAdapter(arrayadapter);
+        String [] all_array = new String [allnames.size()];
+        for(int j=0; j<allnames.size();j++){
+            all_array[j] = allnames.get(j).toString();
+        }
+        CustomAdapter listAdapter = new CustomAdapter(this, R.layout.custom_list_text, all_array, "lastcall.ttf");
+        lv.setAdapter(listAdapter);
         cursor.close();
 
     }
@@ -268,7 +282,12 @@ public class AddActivity extends Activity
     {
         intent = new Intent();
         intent.putExtra("schulden", input);
-        intent.putExtra("first_name", allFirstNames.get(clickedName));
+        if(ihm_mir.equals("Ich - Ihm"))
+        {
+            intent.putExtra("first_name", "to "+allFirstNames.get(clickedName));
+        }else{
+            intent.putExtra("first_name", "from "+allFirstNames.get(clickedName));
+        }
         intent.putExtra("last_name", allLastNames.get(clickedName));
         intent.putExtra("nummer", allnumbers.get(clickedName));
         setResult(Activity.RESULT_OK, intent);

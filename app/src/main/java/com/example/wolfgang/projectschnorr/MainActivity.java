@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -33,6 +34,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -116,6 +119,7 @@ public class MainActivity extends ActionBarActivity
             Toast.makeText(this, "Nummer: " + phoneNumber, Toast.LENGTH_LONG).show();
         }catch(Exception e){
             Toast.makeText(this, "Nummer bitte in den Einstellungen eingeben für vollständige Funktionsfähigkeit", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, SettingsActivity.class));
         }
     }
 
@@ -219,8 +223,12 @@ public class MainActivity extends ActionBarActivity
             Log.d(TAG, "in for:  " + everything.get(i));
         }
 
-        ArrayAdapter <String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, everything);
-        list.setAdapter(adapter);
+        String [] all_array = new String [everything.size()];
+        for(int i=0; i<everything.size();i++){
+            all_array[i] = everything.get(i).toString();
+        }
+        CustomAdapter listAdapter = new CustomAdapter(this, R.layout.custom_list_text, all_array, "lastcall.ttf");
+        list.setAdapter(listAdapter);
 
     }
 
@@ -291,7 +299,7 @@ public class MainActivity extends ActionBarActivity
                     Log.d(TAG, "first_name = " + first_name);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.d(TAG, "Es ist etwas schief gelaufen, bitte die Einstellungen und Internetverbindung überprüfen");
             }
 
             return json;
