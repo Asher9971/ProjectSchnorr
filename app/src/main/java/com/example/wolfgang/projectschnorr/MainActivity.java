@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity
     public ArrayList<String> allNummbers = new ArrayList<String>();
     public ArrayList<String> everything = new ArrayList<String>();
     public SharedPreferences prefs;
-    String phoneNumber;
+    String phoneNumber="";
     private String myImei="";
     String selectedName="";
     String selectedNote="";
@@ -68,7 +68,11 @@ public class MainActivity extends ActionBarActivity
         registerForContextMenu(findViewById(R.id.listView));
         askForPhoneNumber();
         mTask.execute();
-        lTask.execute();
+        if(phoneNumber.equals("")){
+
+        }else{
+            lTask.execute();
+        }
     }
 
     @Override
@@ -92,13 +96,14 @@ public class MainActivity extends ActionBarActivity
     {
         try {
             phoneNumber = prefs.getString("number", "");
+            phoneNumber  = phoneNumber.replaceAll(" ", "");
             int length = phoneNumber.length();
             if (phoneNumber.startsWith("+")) {
                 phoneNumber = phoneNumber.substring(4, length);
             } else {
                 phoneNumber = phoneNumber.substring(2, length);
             }
-            if (phoneNumber.equals("")) {
+            if (phoneNumber.isEmpty()) {
                 startActivity(new Intent(this, SettingsActivity.class));
             }
             Toast.makeText(this, "Nummer: " + phoneNumber, Toast.LENGTH_LONG).show();

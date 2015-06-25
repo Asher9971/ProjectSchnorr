@@ -272,6 +272,25 @@ public class AddActivity extends Activity
             DefaultHttpClient client = new DefaultHttpClient();
             HttpPost request = new HttpPost(URLinsert_notification);
             List<NameValuePair> params = new ArrayList<NameValuePair>();
+
+            String phone_to = allnumbers.get(clickedName);
+            phone_to = phone_to.replaceAll(" ", "");
+            int length = phone_to.length();
+            if (phone_to.startsWith("+")) {
+                phone_to = phone_to.substring(4, length);
+            } else {
+                phone_to = phone_to.substring(2, length);
+            }
+
+            String phone_from = prefs.getString("number", "");
+            phone_from = phone_from.replaceAll(" ", "");
+            length = phone_from.length();
+            if (phone_from.startsWith("+")) {
+                phone_from = phone_from.substring(4, length);
+            } else {
+                phone_from = phone_from.substring(2, length);
+            }
+
             if(ihm_mir.equals("Er - Mir")) {
                 params.add(new BasicNameValuePair("first_name", "from " + allFirstNames.get(clickedName)));
                 params.add(new BasicNameValuePair("ownfirst_name", "to "+ownfirst_name));
@@ -281,8 +300,10 @@ public class AddActivity extends Activity
             }
             params.add(new BasicNameValuePair("last_name", ""+allLastNames.get(clickedName)));
             params.add(new BasicNameValuePair("identifier", ""+myImei));
-            params.add(new BasicNameValuePair("phone_to", ""+allnumbers.get(clickedName)));
-            params.add(new BasicNameValuePair("phone_from", ""+prefs.getString("number", "")));
+            params.add(new BasicNameValuePair("phone_to", ""+phone_to));
+            Log.d(TAG, "phone_to: " + phone_to);
+            params.add(new BasicNameValuePair("phone_from", ""+phone_from));
+            Log.d(TAG, "phone_from: " + phone_from);
             params.add(new BasicNameValuePair("note", "" + newSchulden));
             params.add(new BasicNameValuePair("ownlast_name", ""+ownlast_name));
 
