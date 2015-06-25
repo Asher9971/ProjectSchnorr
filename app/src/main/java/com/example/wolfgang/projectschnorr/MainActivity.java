@@ -3,6 +3,8 @@ package com.example.wolfgang.projectschnorr;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,6 +44,7 @@ public class MainActivity extends ActionBarActivity
 
     ListView list;
     public static final String TAG = "MainActivity";
+    public static int LENGTH = 0;
     public ArrayList<String> allFirstNames = new ArrayList<String>();
     public ArrayList<String> allLastNames = new ArrayList<String>();
     public ArrayList<String> allDebts = new ArrayList<String>();
@@ -62,11 +65,14 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        NotificationManager note = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        note.cancelAll();
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         list = (ListView) findViewById(R.id.listView);
         getMyImei();
         registerForContextMenu(findViewById(R.id.listView));
         askForPhoneNumber();
+
         mTask.execute();
         if(phoneNumber.equals("")){
 
@@ -74,6 +80,7 @@ public class MainActivity extends ActionBarActivity
             lTask.execute();
         }
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -292,6 +299,10 @@ public class MainActivity extends ActionBarActivity
         @Override
         protected void onPostExecute(JSONObject json) {
             Log.d(TAG, "in onPostExecute in MainActivity");
+            Intent intent = new Intent(MainActivity.this, MyService.class);
+            startService(intent);
+            LENGTH = allFirstNames.size();
+
             fillList();
         }
     }

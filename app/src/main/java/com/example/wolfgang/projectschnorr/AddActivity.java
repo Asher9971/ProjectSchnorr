@@ -152,7 +152,7 @@ public class AddActivity extends Activity
             String first_name = names[0];
             String last_name = names[1];
             String number = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            if(first_name.contains(input) || last_name.contains(input)) {
+            if(first_name.toLowerCase().contains(input.toLowerCase()) || last_name.toLowerCase().contains(input.toLowerCase())) {
                 allFirstNames.add(first_name);
                 allLastNames.add(last_name);
                 allnames.add(first_name+" "+last_name);
